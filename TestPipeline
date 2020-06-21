@@ -1,0 +1,45 @@
+//Set Manage Jenkins > Configure System > Global Pipeline Libraries > Name:, Default version:, 
+@Library('gitcheckout-library@master') _
+
+pipeline {
+
+   agent {
+       node {
+           label 'master'
+       }
+   }
+
+   tools {
+       maven 'maven3'
+   }
+   
+   environment {
+       PROJECT_NAME = "Test"
+       ENV = "Dev"
+   }
+
+   stages {
+
+       stage("Clean Workspace") {
+           steps {
+               cleanWs()
+               sh "Cleaning Workspace for ${PROJECT_NAME}"
+           }
+       }
+
+       stage("Code Checkout") {
+           steps {
+               GitCheckout(
+                   branch_name: "",
+                   url_name: ""
+               )
+           }
+       }
+
+       stage("Compile Code") {
+           steps {
+               sh 'mvn install -Dmaven.test.skip=true'
+           }
+       }
+   }
+}
